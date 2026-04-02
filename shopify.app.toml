@@ -1,6 +1,6 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "64c77857eda43a5d9d695efc4518f197"
+
 name = "Smart Alt Text"
 application_url = "https://example.com"
 embedded = true

@@ -2,7 +2,7 @@ import { useFetcher } from "react-router";
 import { useState, useEffect } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-function ImageRow({ productId, productTitle, productType, image, index }) {
+function ImageCard({ productId, productTitle, productType, productDescription, image, index }) {
   const fetcher = useFetcher();
   const shopify = useAppBridge();
   const [altText, setAltText] = useState(image.altText || "");
@@ -25,109 +25,133 @@ function ImageRow({ productId, productTitle, productType, image, index }) {
   }, [fetcher.data?.success, fetcher.data?.error, shopify]);
 
   return (
-    <s-section heading={`Image ${index + 1}`}>
-      <div style={{ display: "flex", gap: "24px", alignItems: "flex-start" }}>
+    <div style={{
+      border: "1px solid #e1e3e5",
+      borderRadius: "8px",
+      overflow: "hidden",
+      background: "#fff",
+      display: "flex",
+      flexDirection: "column",
+    }}>
+      <img
+        src={image.url}
+        alt={altText}
+        style={{
+          width: "100%",
+          height: "160px",
+          objectFit: "cover",
+        }}
+      />
 
-        <img
-          src={image.url}
-          alt={altText}
+      <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+        <textarea
+          value={altText}
+          onChange={(e) => setAltText(e.target.value)}
+          maxLength={125}
+          rows={3}
           style={{
-            width: "140px",
-            height: "140px",
-            objectFit: "cover",
-            borderRadius: "8px",
-            flexShrink: 0,
-            border: "1px solid #e1e3e5",
+            width: "100%",
+            padding: "8px",
+            fontSize: "13px",
+            border: "1px solid #c9cccf",
+            borderRadius: "6px",
+            resize: "none",
+            fontFamily: "inherit",
+            boxSizing: "border-box",
+            outline: "none",
+            color: "#202223",
           }}
+          placeholder="Generate alt text..."
         />
+        <p style={{ fontSize: "11px", color: "#6d7175", margin: 0 }}>
+          {altText.length}/125
+        </p>
 
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "12px" }}>
-          <div>
-            <label style={{ display: "block", fontSize: "14px", fontWeight: "500", marginBottom: "6px", color: "#202223" }}>
-              Alt Text
-            </label>
-            <textarea
-              value={altText}
-              onChange={(e) => setAltText(e.target.value)}
-              maxLength={125}
-              rows={3}
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                fontSize: "14px",
-                border: "1px solid #c9cccf",
-                borderRadius: "6px",
-                resize: "vertical",
-                fontFamily: "inherit",
-                boxSizing: "border-box",
-                outline: "none",
-              }}
-              placeholder="Click 'Generate with AI' to auto-generate alt text..."
-            />
-            <p style={{ fontSize: "12px", color: "#6d7175", marginTop: "4px" }}>
-              {altText.length}/125 characters
-            </p>
-          </div>
+        <div style={{ display: "flex", gap: "8px", marginTop: "auto" }}>
+          <fetcher.Form method="post">
+            <input type="hidden" name="intent" value="generate" />
+            <input type="hidden" name="title" value={productTitle} />
+            <input type="hidden" name="productType" value={productType || ""} />
+            <input type="hidden" name="description" value={productDescription || ""} />
+            <input type="hidden" name="imageUrl" value={image.url} />
+            <s-button variant="primary" type="submit" {...(isGenerating ? { loading: true } : {})}>
+              Generate
+            </s-button>
+          </fetcher.Form>
 
-          <div style={{ display: "flex", gap: "8px" }}>
-            <fetcher.Form method="post">
-              <input type="hidden" name="intent" value="generate" />
-              <input type="hidden" name="title" value={productTitle} />
-              <input type="hidden" name="productType" value={productType || ""} />
-              <input type="hidden" name="imageUrl" value={image.url} />
-              <s-button
-                variant="primary"
-                type="submit"
-                {...(isGenerating ? { loading: true } : {})}
-              >
-                Generate with AI
-              </s-button>
-            </fetcher.Form>
-
-            <fetcher.Form method="post">
-              <input type="hidden" name="intent" value="save" />
-              <input type="hidden" name="productId" value={productId} />
-              <input type="hidden" name="imageId" value={image.id} />
-              <input type="hidden" name="altText" value={altText} />
-              <s-button
-                type="submit"
-                {...(isSaving ? { loading: true } : {})}
-              >
-                Save to Shopify
-              </s-button>
-            </fetcher.Form>
-          </div>
+          <fetcher.Form method="post">
+            <input type="hidden" name="intent" value="save" />
+            <input type="hidden" name="productId" value={productId} />
+            <input type="hidden" name="imageId" value={image.id} />
+            <input type="hidden" name="altText" value={altText} />
+            <s-button type="submit" {...(isSaving ? { loading: true } : {})}>
+              Save
+            </s-button>
+          </fetcher.Form>
         </div>
-
       </div>
-    </s-section>
+    </div>
   );
 }
 
 export function ProductGroup({ product }) {
   return (
-    <s-section heading={product.title}>
-      {product.productType && (
-        <s-paragraph>
-          <s-text tone="subdued">Category: {product.productType}</s-text>
-        </s-paragraph>
-      )}
-      <s-paragraph>
-        <s-text tone="subdued">
+    <div style={{
+      border: "1px solid #e1e3e5",
+      borderRadius: "12px",
+      overflow: "hidden",
+      marginBottom: "24px",
+      background: "#f6f6f7",
+    }}>
+      {/* Product Header */}
+      <div style={{
+        padding: "16px 20px",
+        borderBottom: "1px solid #e1e3e5",
+        background: "#fff",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}>
+        <div>
+          <p style={{ margin: 0, fontWeight: "600", fontSize: "15px", color: "#202223" }}>
+            {product.title}
+          </p>
+          {product.productType && (
+            <p style={{ margin: "2px 0 0", fontSize: "13px", color: "#6d7175" }}>
+              {product.productType}
+            </p>
+          )}
+        </div>
+        <span style={{
+          background: "#f0f0f0",
+          borderRadius: "20px",
+          padding: "4px 12px",
+          fontSize: "12px",
+          color: "#6d7175",
+        }}>
           {product.images.length} image{product.images.length !== 1 ? "s" : ""}
-        </s-text>
-      </s-paragraph>
+        </span>
+      </div>
 
-      {product.images.map((image, index) => (
-        <ImageRow
-          key={image.node.id}
-          productId={product.id}
-          productTitle={product.title}
-          productType={product.productType}
-          image={image.node}
-          index={index}
-        />
-      ))}
-    </s-section>
+      {/* Images Grid */}
+      <div style={{
+        padding: "16px",
+        display: "grid",
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: "16px",
+      }}>
+        {product.images.map((image, index) => (
+          <ImageCard
+            key={image.node.id}
+            productId={product.id}
+            productTitle={product.title}
+            productType={product.productType}
+            productDescription={product.description}
+            image={image.node}
+            index={index}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

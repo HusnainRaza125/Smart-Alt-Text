@@ -11,7 +11,7 @@ function resizeShopifyImage(url, size = "512x512") {
             .replace(/\.webp(\?|$)/i, `_${size}.webp$1`);
 }
 
-export async function generateAltText({ title, productType, imageUrl }) {
+export async function generateAltText({ title, productType, description, imageUrl }) {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const resizedUrl = resizeShopifyImage(imageUrl);
 
@@ -27,7 +27,8 @@ export async function generateAltText({ title, productType, imageUrl }) {
             text: `Please analyze the following product details and the provided image to generate an optimized Alt Text:
 
 Product Title: ${title}
-Product Category: ${productType}
+Product Category: ${productType || "N/A"}
+Product Description: ${description || "N/A"}
 
 Task:
 1. Describe exactly what is visible in the image.
