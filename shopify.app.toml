@@ -1,16 +1,15 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-
+client_id = "98697a11b34aeeb5bc2685e8beeb2a66"
 name = "Smart Alt Text"
-application_url = "https://example.com"
+application_url = "https://shopify.dev/apps/default-app-home"
 embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
-include_config_on_deploy = true
 
 [webhooks]
-api_version = "2026-04"
+api_version = "2026-07"
 
   [[webhooks.subscriptions]]
   topics = [ "app/uninstalled" ]
@@ -25,7 +24,7 @@ api_version = "2026-04"
 scopes = "write_metaobject_definitions,write_metaobjects,write_products,read_products"
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
 
 [product.metafields.app.demo_info]
 type = "single_line_text_field"

@@ -72,7 +72,7 @@ export const loader = async ({ request }) => {
 };
 
 export const action = async ({ request }) => {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
   const formData = await request.formData();
   const intent = formData.get("intent");
 
@@ -82,7 +82,9 @@ export const action = async ({ request }) => {
       productType: formData.get("productType"),
       description: formData.get("description"),
       imageUrl: formData.get("imageUrl"),
+      shop: session.shop,
     });
+    if (!altText) return data({ error: "OpenAI API key not set. Please add it in Settings." });
     return data({ altText });
   }
 

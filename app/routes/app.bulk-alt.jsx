@@ -75,7 +75,7 @@ export const loader = async ({ request }) => {
 };
 
 export const action = async ({ request }) => {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
   const formData = await request.formData();
   const intent = formData.get("intent");
 
@@ -94,11 +94,14 @@ export const action = async ({ request }) => {
             productType: product.productType,
             description: product.description,
             imageUrl: image.node.url,
+            shop: session.shop,
           }),
         }))
       )
     );
 
+    if (results.some((r) => !r.generatedAlt))
+      return data({ error: "OpenAI API key not set. Please add it in Settings." });
     // Merge generated alts back into products
     const updatedProducts = products.map(({ node: product }) => ({
       node: {

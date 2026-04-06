@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import db from "../db.server";
 
 const SYSTEM_PROMPT = `You are an expert E-commerce SEO Specialist and Accessibility Consultant. Your goal is to generate high-quality, descriptive, and concise Alt Text for Shopify product images. Focus on physical characteristics (color, material, shape) and the context provided by the product title. Avoid redundant phrases like 'image of' or 'photo of'. Keep the output under 125 characters to ensure compatibility with screen readers and search engine indexing.`;
 
@@ -11,8 +12,11 @@ function resizeShopifyImage(url, size = "512x512") {
             .replace(/\.webp(\?|$)/i, `_${size}.webp$1`);
 }
 
-export async function generateAltText({ title, productType, description, imageUrl }) {
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+export async function generateAltText({ title, productType, description, imageUrl, shop }) {
+  const settings = await db.settings.findUnique({ where: { shop } });
+  const apiKey = settings?.openaiKey;
+  if (!apiKey) return null;
+  const openai = new OpenAI({ apiKey });
   const resizedUrl = resizeShopifyImage(imageUrl);
 
   const completion = await openai.chat.completions.create({

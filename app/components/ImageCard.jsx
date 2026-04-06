@@ -59,6 +59,7 @@ export function ImageCard({ productId, productTitle, productType, image }) {
             <input type="hidden" name="intent" value="generate" />
             <input type="hidden" name="title" value={productTitle} />
             <input type="hidden" name="productType" value={productType || ""} />
+            <input type="hidden" name="description" value={image.description || ""} />
             <input type="hidden" name="imageUrl" value={image.url} />
             <s-button
               variant="primary"

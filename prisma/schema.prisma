@@ -13,6 +13,12 @@ datasource db {
   url      = "file:dev.sqlite"
 }
 
+model Settings {
+  id        String @id
+  shop      String @unique
+  openaiKey String
+}
+
 model Session {
   id            String    @id
   shop          String

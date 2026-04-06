@@ -18,6 +18,7 @@ export default function App() {
       <s-app-nav>
         <s-link href="/app">Generate Alt Text</s-link>
         <s-link href="/app/bulk-alt">Bulk Generate</s-link>
+        <s-link href="/app/settings">Settings</s-link>
       </s-app-nav>
       <Outlet />
     </AppProvider>
