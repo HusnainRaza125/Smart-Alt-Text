@@ -1,11 +1,6 @@
 {
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "build/client",
-  "functions": {
-    "build/server/index.js": {
-      "runtime": "nodejs22.x"
-    }
-  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/build/server/index.js" }
   ]
